@@ -6,9 +6,7 @@ bridges:
   lan:
     bootproto: none
   storage:
-    bootproto: static
-    ipv4: 192.168.5.10
-    prefix: 24
+    bootproto: none
 
 vlans:
   1:

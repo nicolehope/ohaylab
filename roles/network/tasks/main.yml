@@ -1,0 +1,17 @@
+- name: Packages
+  yum: name={{ item }} state=present
+  with_items:
+    - bridge-utils
+    - teamd
+
+- name: Teams
+  include: team.yml
+  with_dict: "{{ teams | default({}) }}"
+
+- name: VLANs
+  include: vlan.yml
+  with_dict: "{{ vlans | default({}) }}"
+
+- name: Bridges
+  include: bridge.yml
+  with_dict: "{{ bridges | default({}) }}"

@@ -1,0 +1,14 @@
+- name: EPEL
+  yum: name=epel-release state=present
+
+- name: Packages
+  yum: name={{ item }} state=present
+  with_items:
+    - samba
+
+- name: Top level directory
+  file: path=/samba state=directory
+
+#- name: Shares
+#  file: path=/samba/{{ item }} state=directory
+#  with_items:

@@ -1,0 +1,11 @@
+[lxchosts]
+mojo-jojo
+
+[containers]
+#fileshare
+
+[samba]
+#fileshare
+
+[netatalk]
+#fileshare

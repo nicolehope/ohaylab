@@ -1,0 +1,9 @@
+DEVICE={{ interface }}
+TYPE=Ethernet
+{% if item.value.mtu is defined %}
+MTU={{ item.value.mtu }}
+{% endif %}
+BOOTPROTO=none
+ONBOOT=yes
+BRIDGE={{ item.key }}
+NM_CONTROLLED=no

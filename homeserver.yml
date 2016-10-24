@@ -1,0 +1,11 @@
+- hosts: all
+  become: true
+
+  roles:
+    - { role: core, tags: 'core' }
+
+- hosts: lxchosts
+  become: true
+
+  roles:
+    - { role: lxc, tags: 'lxc' }

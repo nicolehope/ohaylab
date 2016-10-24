@@ -1,0 +1,4 @@
+#!/bin/bash
+for container in $(/usr/bin/lxc-ls --active); do
+  /usr/bin/lxc-stop -n $container
+done

@@ -1,0 +1,45 @@
+bridges:
+  access:
+    bootproto: dhcp
+    slaves:
+      - enp7s0
+  lan:
+    bootproto: none
+  storage:
+    bootproto: static
+    ipv4: 192.168.5.10
+    prefix: 24
+
+vlans:
+  1:
+    bootproto: none
+    bridge: lan
+    interface: trunk
+
+teams:
+  trunk:
+    mode: lacp
+    bootproto: none
+    mtu: 9000
+    bridge: storage
+    slaves:
+      - enp3s0f0
+      - enp3s0f1
+      - enp4s0f0
+      - enp4s0f1
+
+#Just for documentation, currently
+mountpoints:
+  /.btrfs/mojo_jojo:
+  /.btrfs/mojo_storage:
+  /var/lib/lxc:
+
+lxc_containers:
+  fileshare:
+    bridges:
+      lan:
+        device: eth0
+        mac: 00:16:3e:e2:61:49
+    mounts:
+      /.btrfs/mojo_storage/backups/client: srv/backups
+      /.btrfs/mojo_storage/media: srv/media

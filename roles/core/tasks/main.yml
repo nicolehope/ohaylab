@@ -1,0 +1,28 @@
+- name: EPEL
+  yum: name=epel-release state=present
+  when: ansible_distribution == "CentOS"
+
+- selinux: state=disabled
+
+- name: Standard packages
+  yum: name={{ item }} state=present
+  with_items:
+    - man
+    - less
+    - vim-enhanced
+    - yum-plugin-remove-with-leaves
+    - ansible
+    - rsync
+    - wget
+    - net-tools
+
+- block:
+    - name: Host only Packages
+      yum: name={{ item }} state=present
+      with_items:
+        - pciutils
+        - gdisk
+
+    - name: Disable NetworkManager
+      service: name=NetworkManager enabled=no
+  when: ansible_virtualization_role == 'host'

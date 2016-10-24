@@ -1,0 +1,29 @@
+# I could not get the lxc-python2 module to install via pip, so not using the lxc_container module
+# Not bothering with anything but CentOS 7 containers
+- name: EPEL
+  yum: name=epel-release state=present
+  when: ansible_distribution == "CentOS"
+
+- name: Packages
+  yum: name={{ item }} state=present
+  with_items:
+    - lxc
+    - lxc-templates
+
+- name: lxc-stop unit file
+  copy: src=files/lxc-stop.service dest=/etc/systemd/system/lxc-stop.service
+        owner=root mode=0644
+
+- name: lxc-stop-all script
+  copy: src=files/lxc-stop-all dest=/usr/local/bin/lxc-stop-all
+        owner=root mode=0755
+
+- name: LXC autostart
+  service: name={{ item }} enabled=yes
+  with_items:
+      - lxc
+      - lxc-stop
+
+- name: Provision LXC containers
+  include: provision.yml
+  with_dict: "{{ lxc_containers | default({}) }}"

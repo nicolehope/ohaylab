@@ -1,0 +1,9 @@
+DEVICE={{ item.key }}
+TYPE=Bridge
+BOOTPROTO={{ item.value.bootproto }}
+{% if item.value.bootproto == 'static' %}
+IPADDR={{ item.value.ipv4 }}
+PREFIX={{ item.value.prefix }}
+{% endif %}
+ONBOOT=yes
+NM_CONTROLLED=no

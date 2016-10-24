@@ -1,0 +1,22 @@
+lxc.rootfs = /var/lib/lxc/{{ item.key }}/rootfs
+lxc.utsname = {{ item.key }}
+lxc.start.auto = 1
+lxc.start.delay = 5
+lxc.arch = x86_64
+lxc.autodev = 1
+
+lxc.include = /usr/share/lxc/config/centos.common.conf
+
+{% for bridge in item.value.bridges %}
+lxc.network.type = veth
+lxc.network.flags = up
+lxc.network.link = {{ bridge }}
+lxc.network.name = {{ item.value.bridges[bridge]['device'] }}
+lxc.network.hwaddr = {{ item.value.bridges[bridge]['mac'] }}
+{% endfor %}
+
+{% if item.value.mounts is defined %}
+{% for host_path, c_path in item.value.mounts.items() %}
+lxc.mount.entry={{ host_path }} {{ c_path }} none bind 0 0
+{% endfor %}
+{% endif %}

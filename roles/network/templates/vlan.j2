@@ -1,0 +1,10 @@
+DEVICE={{ item.value.interface }}.{{ item.key }}
+{% if item.value.mtu is defined %}
+MTU={{ item.value.mtu }}
+{% endif %}
+BOOTPROTO={{ item.value.bootproto }}
+ONBOOT=yes
+VLAN=yes
+{% if item.value.bridge is defined %}
+BRIDGE={{ item.value.bridge }}
+{% endif %}

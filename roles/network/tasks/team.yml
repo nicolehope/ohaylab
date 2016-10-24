@@ -1,0 +1,8 @@
+- name: "Team master ifcfg-{{item.key }}"
+  template: src=templates/team-master.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}
+
+- name: "Team slaves for {{ item.key }}"
+  template: src=templates/team-slave.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+  with_items: "{{ item.value.slaves }}"
+  loop_control:
+    loop_var: interface

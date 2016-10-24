@@ -1,0 +1,9 @@
+- name: "Bridge master ifcfg-{{ item.key }}"
+  template: src=templates/linux-bridge-master.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ item.key }}
+
+- name: "Bridge slaves for {{ item.key }}"
+  template: src=templates/linux-bridge-slave.j2 dest=/etc/sysconfig/network-scripts/ifcfg-{{ interface }}
+  with_items: "{{ item.value.slaves | default() }}"
+  loop_control:
+    loop_var: interface
+  when: item.value.slaves is defined

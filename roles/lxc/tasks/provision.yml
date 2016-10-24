@@ -1,0 +1,50 @@
+- name: "Provision LXC {{ item.key }}"
+  command: lxc-create -n {{ item.key }} -t centos -B best creates=/var/lib/lxc/{{ item.key }}
+
+# Wheel group is enabled for sudo by default
+- name: "Install sudo for {{ item.key }}"
+  command: chroot /var/lib/lxc/{{ item.key }}/rootfs yum -y install sudo
+           creates=/var/lib/lxc/{{ item.key }}/rootfs/etc/sudoers
+
+- name: "Add user {{ ansible_user }} for {{ item.key }}"
+  command: chroot /var/lib/lxc/{{ item.key }}/rootfs adduser -m -G wheel {{ ansible_user }}
+           creates=/var/lib/lxc/{{ item.key }}/rootfs/home/{{ ansible_user }}
+
+- name: "Ansible user .ssh directory"
+  file: path=/var/lib/lxc/{{ item.key }}/rootfs/home/{{ ansible_user }}/.ssh
+        state=directory mode=0700
+
+- name: "Add authorized key for {{ ansible_user }}"
+  authorized_key: user={{ ansible_user }} state=present
+                  path=/var/lib/lxc/{{ item.key }}/rootfs/home/{{ ansible_user }}/.ssh/authorized_keys
+                  key={{ lookup('file', 'pubkeys/{{ ansible_user }}') }}
+
+- name: "Set password for {{ ansible_user }}"
+  shell: echo "{{ ansible_password }}" | chroot /var/lib/lxc/{{ item.key }}/rootfs passwd --stdin {{ ansible_user }}
+  changed_when: false
+
+- name: "config file for {{ item.key }}"
+  template: src=templates/lxc-config.j2 dest=/var/lib/lxc/{{ item.key }}/config
+  register: lxc_config
+
+- name: "Mountpoints for {{ item.key }}"
+  file: path=/var/lib/lxc/{{ item.key }}/rootfs/{{ mount.value }} state=directory
+  with_dict: "{{ item.value.mounts | default({}) }}"
+  loop_control:
+    loop_var: mount
+
+- name: "Check if {{ item.key }} is running"
+  shell: lxc-ls --active | grep -q ^{{ item.key }}$
+  register: lxc_running
+  changed_when: false
+  failed_when: "'command not found' in lxc_running.stderr"
+
+- name: "Restart {{ item.key }} for config change"
+  shell: lxc-stop -n {{ item.key }} && lxc-start -n {{ item.key }} -d
+  when: (lxc_running.rc == 0) and (lxc_config.changed == true)
+  async: 180
+  poll: 5
+
+- name: "Start {{ item.key }}"
+  command: lxc-start -n {{ item.key }} -d
+  when: lxc_running.rc != 0

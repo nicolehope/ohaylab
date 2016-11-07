@@ -1,8 +1,8 @@
 bridges:
-  access:
-    bootproto: dhcp
-    slaves:
-      - enp7s0
+#  access:
+#    bootproto: dhcp
+#    slaves:
+#      - enp7s0
   lan:
     bootproto: none
   storage:

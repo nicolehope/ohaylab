@@ -9,3 +9,9 @@
 
   roles:
     - { role: lxc, tags: 'lxc' }
+
+- hosts: samba
+  become: true
+
+  roles:
+    - { role: samba, tags: 'samba' }

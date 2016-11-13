@@ -41,3 +41,14 @@ lxc_containers:
     mounts:
       /.btrfs/mojo_storage/backups/client: srv/backups
       /.btrfs/mojo_storage/media: srv/media
+      /.btrfs/mojo_storage/scratch: srv/scratch
+  blogdev:
+    bridges:
+      lan:
+        device: eth0
+        mac: 00:16:3e:7a:19:69
+  git:
+    bridges:
+      lan:
+        device: eth0
+        mac: 00:16:3e:cd:e5:81

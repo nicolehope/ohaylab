@@ -1,0 +1,27 @@
+samba:
+  netbios_name: NAS1
+  workgroup: WORKGROUP
+  description: backups/media/etc
+
+samba_shares:
+  backups:
+    path: /srv/backups
+    browsable: 'yes'
+    unix_user: backer
+    unix_uid: 2000
+    write_list:
+      - backer
+  media:
+    path: /srv/media
+    browsable: 'yes'
+    unix_user: mediaite
+    unix_uid: 2001
+    write_list:
+      - mediaite
+  scratch:
+    path: /srv/scratch
+    browsable: 'yes'
+    unix_user: scratchy
+    unix_uid: 2002
+
+afp_shares:

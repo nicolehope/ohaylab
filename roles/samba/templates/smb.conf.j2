@@ -1,0 +1,22 @@
+[global]
+  netbios name = {{ samba.netbios_name }}
+  workgroup = {{ samba.workgroup }}
+  server string = {{ samba.description }}
+  security = user
+
+{% for share in samba_shares %}
+[{{ share }}]
+  path = {{ samba_shares[share].path }}
+  browsable = {{ samba_shares[share].browsable }}
+  map to guest = Bad User
+  guest ok = yes
+  guest account = nobody
+  force user = {{ samba_shares[share].unix_user }}
+{% if samba_shares[share].write_list is defined %}
+  read only = yes
+  write list = {{ samba_shares[share].write_list | join('') }}
+{% else %}
+  read only = no
+{% endif %}
+
+{% endfor %}

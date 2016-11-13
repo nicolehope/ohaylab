@@ -1,14 +1,41 @@
-- name: EPEL
-  yum: name=epel-release state=present
-
 - name: Packages
   yum: name={{ item }} state=present
   with_items:
     - samba
 
-- name: Top level directory
-  file: path=/samba state=directory
+- name: Samba unix users
+  user: name={{ samba_shares[item.key].unix_user }} uid={{ samba_shares[item.key].unix_uid }} state=present
+  with_dict: "{{ samba_shares }}"
 
-#- name: Shares
-#  file: path=/samba/{{ item }} state=directory
-#  with_items:
+- name: Share directories
+  file: path={{ samba_shares[item.key].path }} state=directory
+        owner={{ samba_shares[item.key].unix_user }}
+  with_dict: "{{ samba_shares }}"
+
+- name: Samba passwords
+  shell: echo -e "{{ item.value }}\n{{ item.value }}" | smbpasswd -s -a {{ item.key }}
+  with_dict: "{{ samba_users }}"
+
+- name: /etc/samba/smb.conf
+  template: src=templates/smb.conf.j2 dest=/etc/samba/smb.conf
+  register: smb_conf
+
+- name: Restart services
+  service: name={{ item }} state=restarted
+  with_items:
+    - smb
+    - nmb
+  when: smb_conf.changed
+
+- name: Enable services
+  service: name={{ item }} enabled=true state=started
+  with_items:
+    - smb
+    - nmb
+
+- name: firewalld ports
+  firewalld: port={{ item }} state=enabled permanent=true
+  with_items:
+    - 137-138/udp
+    - 139/tcp
+    - 445/tcp

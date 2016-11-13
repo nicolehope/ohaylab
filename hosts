@@ -2,10 +2,10 @@
 mojo-jojo
 
 [containers]
-#fileshare
+fileshare
 
 [samba]
-#fileshare
+fileshare
 
 [netatalk]
 #fileshare

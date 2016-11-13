@@ -1,5 +1,5 @@
 samba:
-  netbios_name: NAS1
+  netbios_name: SMB1
   workgroup: WORKGROUP
   description: backups/media/etc
 
@@ -24,4 +24,16 @@ samba_shares:
     unix_user: scratchy
     unix_uid: 2002
 
-afp_shares:
+netatalk:
+  hostname: AFP1
+  model: TimeCapsule
+
+netatalk_shares:
+  backups:
+    path: /srv/backups/time_machine
+    unix_user: backer
+    unix_uid: 2000
+    time_machine: yes
+    size: 512000
+    users:
+      - backer

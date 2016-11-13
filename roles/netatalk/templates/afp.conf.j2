@@ -1,0 +1,19 @@
+[Global]
+  hostname = {{ netatalk.hostname }}
+{% if netatalk.model is defined %}
+  mimic model = {{ netatalk.model }}
+{% endif %}
+
+{% for share in netatalk_shares %}
+[{{ share }}]
+  path = {{ netatalk_shares[share].path }}
+{% if netatalk_shares[share].time_machine is defined %}
+  time machine = yes
+{% if netatalk_shares[share].size is defined %}
+  vol size limit = {{ netatalk_shares[share].size }}
+{% endif %}
+{% endif %}
+{% if netatalk_shares[share].users is defined %}
+  valid users = {{ netatalk_shares[share].users | join('') }}
+{% endif %}
+{% endfor %}

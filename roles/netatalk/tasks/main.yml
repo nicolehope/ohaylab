@@ -1,0 +1,40 @@
+- name: Packages
+  yum: name={{ item }} state=present
+  with_items:
+    - avahi
+
+- name: Copy RPM
+  copy: src=files/netatalk-3.1.10-0.1.1.el7.centos.x86_64.rpm dest=/root/netatalk.rpm
+
+- name: Install RPM
+  command: yum -y install /root/netatalk.rpm creates=/usr/sbin/netatalk
+
+- name: Share directories
+  file: path={{ netatalk_shares[item.key].path }} state=directory
+        owner={{ netatalk_shares[item.key].unix_user }}
+  with_dict: "{{ netatalk_shares }}"
+
+- name: /etc/netatalk/afp.conf
+  template: src=templates/afp.conf.j2 dest=/etc/netatalk/afp.conf
+  register: afp_conf
+
+- name: Restart services
+  service: name={{ item }} state=restarted
+  with_items:
+    - netatalk
+  when: afp_conf.changed
+
+- name: Enable services
+  service: name={{ item }} enabled=true state=started
+  with_items:
+    - netatalk
+
+- name: firewalld ports
+  firewalld: port={{ item }} state=enabled permanent=true
+  with_items:
+    - 548/tcp
+
+- name: firewalld services
+  firewalld: service={{ item }} state=enabled permanent=true
+  with_items:
+    - mdns

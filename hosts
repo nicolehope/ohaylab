@@ -3,9 +3,11 @@ mojo-jojo
 
 [containers]
 fileshare
+git
+blogdev
 
 [samba]
 fileshare
 
 [netatalk]
-#fileshare
+fileshare

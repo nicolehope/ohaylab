@@ -1,17 +1,19 @@
 - hosts: all
   become: true
-
   roles:
     - { role: core, tags: 'core' }
 
 - hosts: lxchosts
   become: true
-
   roles:
     - { role: lxc, tags: 'lxc' }
 
 - hosts: samba
   become: true
-
   roles:
     - { role: samba, tags: 'samba' }
+
+- hosts: netatalk
+  become: true
+  roles:
+    - { role: netatalk, tags: 'netatalk' }

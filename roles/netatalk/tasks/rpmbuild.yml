@@ -1,0 +1,14 @@
+- name: Packages
+  yum: name={{ item }} state=present
+  with_items:
+    - avahi
+
+- name: Copy SRPM
+  copy: src=files/netatalk-3.1.10-0.1.1.fc26.src.rpm dest=~/netatalk.src.rpm
+  become: true
+  become_user: "{{ ansible_user }}"
+
+- name: Unpack SRPM
+  command: rpm -i ~/netatalk.src.rpm creates=~/rpmbuild
+  become: true
+  become_user: "{{ ansible_user }}"

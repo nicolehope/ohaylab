@@ -17,3 +17,8 @@
   become: true
   roles:
     - { role: netatalk, tags: 'netatalk' }
+
+- hosts: gitlab
+  become: true
+  roles:
+    - { role: gitlab, tags: 'gitlab' }

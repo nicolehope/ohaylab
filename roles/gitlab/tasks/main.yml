@@ -1,0 +1,27 @@
+- name: Gitlab repo
+  copy: src=files/gitlab.repo dest=/etc/yum.repos.d/gitlab.repo
+
+- name: force import of repometa GPG key
+  command: yum -y check-update
+  changed_when: false
+  failed_when: false
+
+- name: Packages
+  yum: name={{ item }} state=present
+  with_items:
+    - gitlab-ce
+
+- name: gitlab url
+  lineinfile: dest=/etc/gitlab/gitlab.rb
+              regexp=^external_url line="external_url '{{ gitlab_url }}'"
+
+# This seems to fail and needs to be run repeatedly on my system
+#- name: gitlab reconfigure
+#  command: gitlab-ctl reconfigure
+#           creates=/var/opt/gitlab
+
+- name: firewalld
+  firewalld: service={{ item }} state=enabled permanent=true
+  with_items:
+    - http
+    - https

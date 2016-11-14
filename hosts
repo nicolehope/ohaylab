@@ -11,3 +11,6 @@ fileshare
 
 [netatalk]
 fileshare
+
+[gitlab]
+git
